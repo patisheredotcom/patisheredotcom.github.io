@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+
+			.container {
+				padding-top:10px;
+			}
+			#cookie{
+			}
+			#cookieArea img {
+			  width: 200px;
+			  height: 200px;
+			  border-radius: 50%;
+				padding:10px 10px 10px 10px;
+			}
+			#display {
+				padding:10px 10px 10px 10px;
+			}
+			#upgrades {
+				overflow-y:auto;
+			}
+			#clicker, #grandmas, #farm, #mine,#factory,#mystery{
+				padding:10px 10px 10px 10px;
+				margin: 10px 0px 10px 0px;
+				border: 1px solid black;
+				height: 85px;
+				border-radius: 10px;
+			}
+			#timer {
+				width: 50%;
+				height: 50px;
+				background-color: green;
+				border-radius: 10px;
+			}
+			#status {
+				background-color: yellow;
+				height:100%;
+				width:0%;
+				border-radius: 10px;
+			}
+
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div id="cookieArea" class="col-xs-5">
+			<img src="http://img04.deviantart.net/a57a/i/2012/133/4/2/free_cookie_texture_by_designercow-d4zkzjg.jpg" id="cookie"/>
+				<div id="display">
+				<p>Cookies: <span id="total_clicks">0</span></p>
+				</div>
+				<div id="timer">
+					<div id="status">
+					</div>
+				</div>
+			</div>
+			<div id="upgrades" class="col-xs-7">
+				<div id="clicker">
+					<div id="info" class="col-xs-4">
+						<p> Clicker </p>
+						<p><span id="clickerCPS">0</span> Cookies per second</p>
+					</div>
+					<div id="buttons" class="col-xs-8">
+						<p>Clickers owned: <span id="clickers">0</span></p>
+						<button id="clickerBuyOne" class="btn">Buy One</button>
+						<button id="clickerBuyTen" class="btn">Buy Ten</button>
+						<button id="clickerBuyMax" class="btn">Buy Max</button>
+					</div>
+				</div>
+
+				<div id="grandmas">
+					<div id="info" class="col-xs-4">
+						<p> Grandmas </p>
+						<p><span id="clickerCPS">0</span> Cookies per second</p>
+					</div>
+					<div id="buttons" class="col-xs-8">
+						<p>Clickers owned: <span id="clickers">0</span></p>
+						<button id="grandmaBuyOne" class="btn">Buy One</button>
+						<button id="grandmaBuyTen" class="btn">Buy Ten</button>
+						<button id="grandmaBuyMax" class="btn">Buy Max</button>
+					</div>
+				</div>
+
+				<div id="farm">
+					<div id="info" class="col-xs-4">
+						<p> Farm </p>
+						<p><span id="clickerCPS">0</span> Cookies per second</p>
+					</div>
+					<div id="buttons" class="col-xs-8">
+						<p>Clickers owned: <span id="clickers">0</span></p>
+						<button id="farmBuyOne" class="btn">Buy One</button>
+						<button id="farmBuyTen" class="btn">Buy Ten</button>
+						<button id="farmBuyMax" class="btn">Buy Max</button>
+					</div>
+				</div>
+
+				<div id="mine">
+					<div id="info" class="col-xs-4">
+						<p> Mine </p>
+						<p><span id="clickerCPS">0</span> Cookies per second</p>
+					</div>
+					<div id="buttons" class="col-xs-8">
+						<p>Clickers owned: <span id="clickers">0</span></p>
+						<button id="mineBuyOne" class="btn">Buy One</button>
+						<button id="mineBuyTen" class="btn">Buy Ten</button>
+						<button id="mineBuyMax" class="btn">Buy Max</button>
+					</div>
+				</div>
+
+				<div id="factory">
+					<div id="info" class="col-xs-4">
+						<p> Factory </p>
+						<p><span id="clickerCPS">0</span> Cookies per second</p>
+					</div>
+					<div id="buttons" class="col-xs-8">
+						<p>Clickers owned: <span id="clickers">0</span></p>
+						<button id="factoryBuyOne" class="btn">Buy One</button>
+						<button id="factoryBuyTen" class="btn">Buy Ten</button>
+						<button id="factoryBuyMax" class="btn">Buy Max</button>
+					</div>
+				</div>
+
+				<div id="mystery">
+					<h1 style="text-align: center">???</h1>
+				</div>
+
+			</div>
+		</div>
+	</body>
+	<script>
+	$(document).ready(function(){
+		var totalClicks = 0;
+		var increment =1;
+		var clicks = 0;
+		var timer = false;
+		var animate;
+		var clickers = 0;
+		var clickerCost = Math.round(15 * Math.pow(1.15,clickers));
+		var clickerCostTen = Math.round(15 * ((Math.pow(1.15,(clickers+10))-Math.pow(1.15,clickers))/0.15));
+		var maxClickers = findMaxClickers(clicks,clickers);
+		var clickerCostMax = Math.round(15 * ((Math.pow(1.15,(clickers+maxClickers))-Math.pow(1.15,clickers))/0.15));
+
+		$('#grandmas').hide();
+		$('#farm').hide();
+		$('#mine').hide();
+		$('#factory').hide();
+
+
+		$('#cookie').click(function(){
+		clicks += increment;
+		totalClicks++;
+			update();
+		});
+
+		$('#clickerBuyOne').click(function() {
+			clickerUpdate();
+			$('#grandmas').show();
+			if (clicks >= clickerCost) {
+				clicks-= clickerCost;
+				clickers++;
+				if (timer==false) {
+					timer = true;
+				}
+			}
+			clickerUpdate();
+			update();
+		});
+		$( "#clickerBuyOne" ).qtip({
+		content: {
+				text: 'Cost: '+clickerCost
+			},
+			position: {
+		     target: 'mouse', // Track the mouse as the positioning target
+		     adjust: { x: 5, y: 5 } // Offset it slightly from under the mouse
+		 }
+		});
+		$('#clickerBuyTen').click(function() {
+			//clickerCostTen = (15 * (Math.pow(1.15,(clickers+10))-Math.pow(1.15,clickers))/0.15);
+			clickerUpdate();
+			$('#clickerBuyTen').qtip('option', 'content.text', 'Buy 10 for: '+clickerCostTen);
+			if (clicks >= clickerCostTen) {
+				clicks-= clickerCostTen;
+				clickers+= 10;
+				if (timer==false) {
+					timer = true;
+				}
+			}
+			clickerUpdate();
+			update();
+		});
+		$( "#clickerBuyTen" ).qtip({
+		content: {
+				text: 'Buy 10 for: '+clickerCostTen
+			},
+			position: {
+		     target: 'mouse', // Track the mouse as the positioning target
+		     adjust: { x: 5, y: 5 } // Offset it slightly from under the mouse
+		 }
+		});
+		$('#clickerBuyMax').click(function() {
+			//clickerCostTen = (15 * (Math.pow(1.15,(clickers+10))-Math.pow(1.15,clickers))/0.15);
+			clickerUpdate();
+			$('#clickerBuyMax').qtip('option', 'content.text', 'Buy '+ maxClickers +' for: '+clickerCostMax);
+			if (clicks >= clickerCostMax) {
+				clicks-= clickerCostMax;
+				clickers+= maxClickers;
+				if (timer==false) {
+					timer = true;
+				}
+			}
+			clickerUpdate();
+			update();
+		});
+		$( "#clickerBuyMax" ).qtip({
+		content: {
+				text: 'Buy '+ maxClickers +' for: '+clickerCostMax
+			},
+			position: {
+		     target: 'mouse', // Track the mouse as the positioning target
+		     adjust: { x: 5, y: 5 } // Offset it slightly from under the mouse
+		 }
+		});
+		$("#clickerBuyMax").hover(function() {
+			clickerUpdate();
+		});
+		$("#clickerBuyOne").hover(function() {
+			clickerUpdate();
+		});
+
+		$("#clickerBuyTen").hover(function() {
+			clickerUpdate();
+		});
+
+		function clickerUpdate() {
+			clickerCost = Math.round(15 * Math.pow(1.15,clickers));
+			clickerCostTen = Math.round(15 * ((Math.pow(1.15,(clickers+10))-Math.pow(1.15,clickers))/0.15));
+			maxClickers = findMaxClickers(clicks,clickers);
+			clickerCostMax = Math.round(15 * ((Math.pow(1.15,(clickers+maxClickers))-Math.pow(1.15,clickers))/0.15));
+			$('#clickerBuyOne').qtip('option', 'content.text', 'Cost: '+clickerCost);
+			$('#clickerBuyTen').qtip('option', 'content.text', 'Buy 10 for: '+clickerCostTen);
+			$('#clickerBuyMax').qtip('option', 'content.text', 'Buy '+ maxClickers +' for: '+clickerCostMax);
+		}
+
+		function update() {
+			document.getElementById("total_clicks").innerHTML = 	Number((clicks).toFixed(1));
+			document.getElementById("clickers").innerHTML = Number((clickers).toFixed(1));
+			document.getElementById("clickerCPS").innerHTML = Number((clickers*0.1).toFixed(1));
+		}
+
+		var czech = setInterval(check, 50)
+
+		function check() {
+			if(timer) {
+				animate = setInterval(animateBar, 1000);
+				window.clearInterval(czech);
+			}
+		}
+
+
+		function animateBar()
+		{
+			$('#status').animate({width:'100%'},1000);
+			$('#status').animate({width:'0%'},0);
+			clicks += clickers*0.1
+			update();
+		}
+
+		function findMaxClickers(c,a) {
+			var x = ((0.15 * c)/15)+Math.pow(1.15,a);
+			var y = Math.log(x) / Math.log(1.15);
+			y -= a;
+			return Math.floor(y);
+		}
+	});
+	</script>
+</html>
